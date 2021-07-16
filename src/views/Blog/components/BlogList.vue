@@ -1,27 +1,27 @@
 <template>
-  <div class="blog-list-container" ref="container" v-loading="isLoading">
+  <div class="blog-list-container" ref="mainContainer" v-loading="isLoading">
     <ul>
       <li v-for="item in data.rows" :key="item.id">
         <div class="thumb" v-if="item.thumb">
           <RouterLink
-            to="{
-            name:'BlogDetail',
-            params:{
-              id:item.id,
-            },
-          }"
+            :to="{
+              name: 'BlogDetail',
+              params: {
+                id: item.id,
+              },
+            }"
           >
-            <img :src="item.thumb" :alt="item.title" :title="item.title" />
+            <img v-lazy="item.thumb" :alt="item.title" :title="item.title" />
           </RouterLink>
         </div>
         <div class="main">
           <RouterLink
-            to="{
-            name:'BlogDetail',
-            params:{
-              id:item.id,
-            },
-          }"
+            :to="{
+              name: 'BlogDetail',
+              params: {
+                id: item.id,
+              },
+            }"
           >
             <h2>{{ item.title }}</h2>
           </RouterLink>
@@ -36,8 +36,9 @@
                   categoryId: item.category.id,
                 },
               }"
-              >{{ item.category.name }}</RouterLink
             >
+              {{ item.category.name }}
+            </RouterLink>
           </div>
           <div class="desc">
             {{ item.description }}
@@ -62,14 +63,12 @@ import Pager from "@/components/Pager";
 import fetchData from "@/mixins/fetchData.js";
 import { getBlogs } from "@/api/blog.js";
 import { formatDate } from "@/utils";
+import mainScroll from "@/mixins/mainScroll.js";
 export default {
-  mixins: [fetchData({})],
+  mixins: [fetchData({}), mainScroll("mainContainer")],
   components: {
     Pager,
   },
-  // crarted() {
-  //   console.log(this.routeInfo);
-  // },
   computed: {
     // 获取路由信息
     routeInfo() {
@@ -120,8 +119,8 @@ export default {
   watch: {
     async $route() {
       this.isLoading = true;
-      // // 滚动高度为0
-      this.$refs.container.scrollTop = 0;
+      // 滚动高度为0
+      this.$refs.mainContainer.scrollTop = 0;
       this.data = await this.fetchData();
       this.isLoading = false;
     },
